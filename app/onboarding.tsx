@@ -236,7 +236,9 @@ export default function OnboardingScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>{renderStep()}</ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false} className="pb-24">
+        {renderStep()}
+      </ScrollView>
     </View>
   )
 }

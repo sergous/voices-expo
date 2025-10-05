@@ -1,4 +1,5 @@
 import BottomNavigation from "@/components/BottomNavigation"
+import { router } from "expo-router"
 import {
   Calendar,
   ChevronRight,
@@ -173,7 +174,13 @@ export default function DashboardScreen() {
                     <Text className="text-white font-bold">Breath Control Mastery</Text>
                     <Text className="text-[#B3B3B3] text-sm">Lesson 3 of 8</Text>
                   </View>
-                  <TouchableOpacity className="bg-[#1ED760] rounded-full p-2">
+                  <TouchableOpacity
+                    className="bg-[#1ED760] rounded-full p-2"
+                    onPress={() => {
+                      console.log("Navigating to audio player...")
+                      router.push("/player" as any)
+                    }}
+                  >
                     <Play color="white" size={16} />
                   </TouchableOpacity>
                 </View>
@@ -188,7 +195,10 @@ export default function DashboardScreen() {
                     <Text className="text-white font-bold">Vocal Warmups</Text>
                     <Text className="text-[#B3B3B3] text-sm">Not started</Text>
                   </View>
-                  <TouchableOpacity className="bg-[#2A2A2A] rounded-full p-2">
+                  <TouchableOpacity
+                    className="bg-[#2A2A2A] rounded-full p-2"
+                    onPress={() => router.push("/player")}
+                  >
                     <Play color="white" size={16} />
                   </TouchableOpacity>
                 </View>
@@ -220,12 +230,18 @@ export default function DashboardScreen() {
                                 <Text className="text-[#1ED760] text-sm mr-2">
                                   {item.progress}%
                                 </Text>
-                                <TouchableOpacity className="bg-[#1ED760] rounded-full p-2">
+                                <TouchableOpacity
+                                  className="bg-[#1ED760] rounded-full p-2"
+                                  onPress={() => router.push("/player")}
+                                >
                                   <Play color="white" size={16} />
                                 </TouchableOpacity>
                               </View>
                             ) : (
-                              <TouchableOpacity className="bg-[#1ED760] rounded-full p-2">
+                              <TouchableOpacity
+                                className="bg-[#1ED760] rounded-full p-2"
+                                onPress={() => router.push("/player")}
+                              >
                                 <Play color="white" size={16} />
                               </TouchableOpacity>
                             )}

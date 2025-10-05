@@ -2,6 +2,7 @@ import BottomNavigation from "@/components/BottomNavigation"
 import { Mic, Play, Search, Unlock } from "lucide-react-native"
 import React, { useEffect, useState } from "react"
 import { Animated, SectionList, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
 
 // Mock data for courses and podcasts
 const mockCourses = [
@@ -126,39 +127,45 @@ const ContentListScreen = () => {
     })
     .filter((section) => section.data.length > 0)
 
-  const renderHeader = () => (
-    <View className="bg-gray-900 p-4">
-      {/* Header with search and filters */}
-      <View className="flex-row items-center mb-4">
-        <View className="flex-row items-center bg-gray-800 rounded-full px-4 py-2 flex-1">
-          <Search color="#B3B3B3" size={20} />
-          <TextInput
-            placeholder="Search courses..."
-            placeholderTextColor="#B3B3B3"
-            className="flex-1 text-white ml-2"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
+  const renderFixedHeader = () => (
+    <SafeAreaView className="bg-gray-900 z-10">
+      <View className="p-4">
+        {/* Search bar */}
+        <View className="flex-row items-center mb-4">
+          <View className="flex-row items-center bg-gray-800 rounded-full px-4 py-2 flex-1">
+            <Search color="#B3B3B3" size={20} />
+            <TextInput
+              placeholder="Search courses..."
+              placeholderTextColor="#B3B3B3"
+              className="flex-1 text-white ml-2"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
+        </View>
+
+        {/* Filter buttons */}
+        <View className="flex-row mb-2">
+          {["All", "Voice Training", "Relaxation", "Warmups"].map((filter) => (
+            <TouchableOpacity
+              key={filter}
+              className={`px-4 py-2 rounded-full mr-2 ${
+                activeFilter === filter ? "bg-green-500" : "bg-gray-800"
+              }`}
+              onPress={() => setActiveFilter(filter)}
+            >
+              <Text className={`${activeFilter === filter ? "text-white" : "text-gray-300"}`}>
+                {filter}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
+    </SafeAreaView>
+  )
 
-      {/* Filter buttons */}
-      <View className="flex-row mb-4">
-        {["All", "Voice Training", "Relaxation", "Warmups"].map((filter) => (
-          <TouchableOpacity
-            key={filter}
-            className={`px-4 py-2 rounded-full mr-2 ${
-              activeFilter === filter ? "bg-green-500" : "bg-gray-800"
-            }`}
-            onPress={() => setActiveFilter(filter)}
-          >
-            <Text className={`${activeFilter === filter ? "text-white" : "text-gray-300"}`}>
-              {filter}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
+  const renderListHeader = () => (
+    <View className="bg-gray-900 p-4 pt-2">
       {/* Section header */}
       <Text className="text-white text-2xl font-bold mb-2">Your Learning Journey</Text>
       <Text className="text-gray-400 mb-4">Continue where you left off</Text>
@@ -204,15 +211,20 @@ const ContentListScreen = () => {
 
   return (
     <View className="flex-1 bg-gray-900">
+      {/* Fixed Header */}
+      {renderFixedHeader()}
+
+      {/* Scrollable Content */}
       <SectionList
         sections={filteredSections}
         renderItem={renderCourseItem}
         renderSectionHeader={renderSectionHeader}
-        ListHeaderComponent={renderHeader}
+        ListHeaderComponent={renderListHeader}
         className="flex-1"
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingBottom: 120 }}
         refreshing={isLoading}
         onRefresh={() => setIsLoading(true)}
+        showsVerticalScrollIndicator={false}
       />
 
       {/* Bottom Navigation */}

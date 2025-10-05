@@ -1,3 +1,4 @@
+import BottomNavigation from "@/components/BottomNavigation"
 import { Slider } from "@/components/ui/slider"
 import { ArrowLeft, Music, Pause, Play, SkipForward, Trophy } from "lucide-react-native"
 import React, { useEffect, useState } from "react"
@@ -179,7 +180,7 @@ export default function VoiceShadowingScreen() {
         <View className="w-6"></View>
       </View>
 
-      <ScrollView className="flex-1 px-4 pb-24">
+      <ScrollView className="flex-1 px-4 pb-32">
         {/* Track Info */}
         <View className="items-center mt-6 mb-8">
           <Image
@@ -336,18 +337,8 @@ export default function VoiceShadowingScreen() {
         </View>
       </ScrollView>
 
-      {/* Subscription Banner */}
-      <View className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-purple-600 p-4 rounded-t-2xl">
-        <View className="flex-row justify-between items-center">
-          <View>
-            <Text className="text-white font-bold">Unlock Premium Tracks</Text>
-            <Text className="text-gray-200 text-sm">Subscribe for $5/month</Text>
-          </View>
-          <TouchableOpacity className="bg-white rounded-full px-4 py-2">
-            <Text className="text-blue-600 font-bold">Subscribe</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      {/* Bottom Navigation */}
+      <BottomNavigation />
     </View>
   )
 }

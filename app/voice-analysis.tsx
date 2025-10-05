@@ -5,6 +5,7 @@ import React, { useRef, useState } from "react"
 import {
   Animated,
   Dimensions,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -133,134 +134,141 @@ export default function VoiceAnalysisScreen() {
   }
 
   return (
-    <View className="flex-1 bg-gray-900 p-4 pt-12">
-      {/* Header */}
-      <View className="flex-row items-center mb-8">
-        <TouchableOpacity className="p-2 mr-4">
-          <ArrowLeft size={28} color="#1ED760" />
-        </TouchableOpacity>
-        <Text className="text-white text-2xl font-bold">Voice Analysis</Text>
-      </View>
+    <View className="flex-1 bg-gray-900">
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ padding: 16, paddingTop: 48, paddingBottom: 120 }}
+      >
+        {/* Header */}
+        <View className="flex-row items-center mb-8">
+          <TouchableOpacity className="p-2 mr-4">
+            <ArrowLeft size={28} color="#1ED760" />
+          </TouchableOpacity>
+          <Text className="text-white text-2xl font-bold">Voice Analysis</Text>
+        </View>
 
-      {/* Main Content */}
-      <View className="flex-1">
-        {!analysisComplete ? (
-          <View className="flex-1 items-center justify-center">
-            {/* Center: Large TouchableOpacity with mic pulse animation */}
-            <TouchableOpacity
-              onPress={handleRecord}
-              disabled={isRecording}
-              className={`items-center justify-center rounded-full mb-8 ${isRecording ? "bg-red-500" : "bg-[#1ED760]"}`}
-              style={[
-                styles.recordButton,
-                {
-                  width: 120,
-                  height: 120,
-                  transform: [{ scale: pulseAnimation }],
-                },
-              ]}
-            >
-              <Mic size={56} color="white" strokeWidth={1.5} />
-              {isRecording && (
-                <View className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full items-center justify-center">
-                  <View className="w-3 h-3 bg-white rounded-full" />
-                </View>
-              )}
-            </TouchableOpacity>
+        {/* Main Content */}
+        <View className="flex-1">
+          {!analysisComplete ? (
+            <View className="flex-1 items-center justify-center">
+              {/* Center: Large TouchableOpacity with mic pulse animation */}
+              <TouchableOpacity
+                onPress={handleRecord}
+                disabled={isRecording}
+                className={`items-center justify-center rounded-full mb-8 ${isRecording ? "bg-red-500" : "bg-[#1ED760]"}`}
+                style={[
+                  styles.recordButton,
+                  {
+                    width: 120,
+                    height: 120,
+                    transform: [{ scale: pulseAnimation }],
+                  },
+                ]}
+              >
+                <Mic size={56} color="white" strokeWidth={1.5} />
+                {isRecording && (
+                  <View className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full items-center justify-center">
+                    <View className="w-3 h-3 bg-white rounded-full" />
+                  </View>
+                )}
+              </TouchableOpacity>
 
-            <Text className="text-white text-xl mb-2">
-              {isRecording ? "Recording..." : "Speak a Phrase"}
-            </Text>
-            <Text className="text-gray-400 text-center mb-6">
-              {isRecording ? "Speak naturally for 5 seconds" : "Tap the button to start recording"}
-            </Text>
-
-            {/* Instructions */}
-            <View className="bg-gray-800 rounded-2xl p-4 mt-4">
-              <Text className="text-white font-bold mb-2">Tips for best results:</Text>
-              <Text className="text-gray-300 text-sm mb-1">
-                • Speak in a normal, conversational tone
+              <Text className="text-white text-xl mb-2">
+                {isRecording ? "Recording..." : "Speak a Phrase"}
               </Text>
-              <Text className="text-gray-300 text-sm mb-1">• Find a quiet environment</Text>
-              <Text className="text-gray-300 text-sm">• Record for the full 5 seconds</Text>
-            </View>
-          </View>
-        ) : (
-          <View className="flex-1">
-            {/* Analysis Results */}
-            <View className="flex-1">
-              <Text className="text-white text-xl font-bold text-center mb-6">
-                Your Voice Report
+              <Text className="text-gray-400 text-center mb-6">
+                {isRecording
+                  ? "Speak naturally for 5 seconds"
+                  : "Tap the button to start recording"}
               </Text>
 
-              {/* Voice Age */}
-              <View className="bg-gray-800 rounded-2xl p-4 mb-4">
-                <Text className="text-gray-400 mb-2">Voice Age</Text>
-                <Animated.Text className="text-white text-4xl font-bold">
-                  {voiceAgeValue.interpolate({
-                    inputRange: [0, mockAnalysisResults.voiceAge],
-                    outputRange: ["0", `${mockAnalysisResults.voiceAge}`],
-                    extrapolate: "clamp",
-                  })}
-                </Animated.Text>
-              </View>
-
-              {/* Tension */}
-              <View className="bg-gray-800 rounded-2xl p-4 mb-4">
-                <Text className="text-gray-400 mb-2">Tension</Text>
-                <View className="flex-row">
-                  <Animated.Text className="text-white text-4xl font-bold">
-                    {tensionValue.interpolate({
-                      inputRange: [0, mockAnalysisResults.tension],
-                      outputRange: ["0", `${mockAnalysisResults.tension}`],
-                      extrapolate: "clamp",
-                    })}
-                  </Animated.Text>
-                  <Text className="text-white text-4xl font-bold">%</Text>
-                </View>
-              </View>
-
-              {/* Influence */}
-              <View className="bg-gray-800 rounded-2xl p-4 mb-4">
-                <Text className="text-gray-400 mb-2">Influence</Text>
-                <View className="flex-row">
-                  <Animated.Text className="text-white text-4xl font-bold">
-                    {influenceValue.interpolate({
-                      inputRange: [0, mockAnalysisResults.influence],
-                      outputRange: ["0", `${mockAnalysisResults.influence}`],
-                      extrapolate: "clamp",
-                    })}
-                  </Animated.Text>
-                  <Text className="text-white text-4xl font-bold">/100</Text>
-                </View>
-              </View>
-
-              {/* Comparison */}
-              <View className="bg-blue-900/30 rounded-2xl p-4 mb-4">
-                <Text className="text-blue-300 italic text-center text-lg">
-                  "{results?.comparison}"
+              {/* Instructions */}
+              <View className="bg-gray-800 rounded-2xl p-4 mt-4">
+                <Text className="text-white font-bold mb-2">Tips for best results:</Text>
+                <Text className="text-gray-300 text-sm mb-1">
+                  • Speak in a normal, conversational tone
                 </Text>
-              </View>
-
-              {/* Exercise Recommendation */}
-              <View className="bg-gray-800 rounded-2xl p-4 mb-6">
-                <Text className="text-white text-xl font-bold mb-3">Exercise Suggestion</Text>
-                <Text className="text-gray-300">{results?.exercise}</Text>
-              </View>
-
-              {/* Action Buttons */}
-              <View className="flex-row gap-4 mb-6">
-                <TouchableOpacity
-                  onPress={resetAnalysis}
-                  className="flex-1 bg-gray-800 rounded-xl p-4 items-center"
-                >
-                  <Text className="text-white text-lg font-bold">Re-analyze</Text>
-                </TouchableOpacity>
+                <Text className="text-gray-300 text-sm mb-1">• Find a quiet environment</Text>
+                <Text className="text-gray-300 text-sm">• Record for the full 5 seconds</Text>
               </View>
             </View>
-          </View>
-        )}
-      </View>
+          ) : (
+            <View className="flex-1">
+              {/* Analysis Results */}
+              <View className="flex-1">
+                <Text className="text-white text-xl font-bold text-center mb-6">
+                  Your Voice Report
+                </Text>
+
+                {/* Voice Age */}
+                <View className="bg-gray-800 rounded-2xl p-4 mb-4">
+                  <Text className="text-gray-400 mb-2">Voice Age</Text>
+                  <Animated.Text className="text-white text-4xl font-bold">
+                    {voiceAgeValue.interpolate({
+                      inputRange: [0, mockAnalysisResults.voiceAge],
+                      outputRange: ["0", `${mockAnalysisResults.voiceAge}`],
+                      extrapolate: "clamp",
+                    })}
+                  </Animated.Text>
+                </View>
+
+                {/* Tension */}
+                <View className="bg-gray-800 rounded-2xl p-4 mb-4">
+                  <Text className="text-gray-400 mb-2">Tension</Text>
+                  <View className="flex-row">
+                    <Animated.Text className="text-white text-4xl font-bold">
+                      {tensionValue.interpolate({
+                        inputRange: [0, mockAnalysisResults.tension],
+                        outputRange: ["0", `${mockAnalysisResults.tension}`],
+                        extrapolate: "clamp",
+                      })}
+                    </Animated.Text>
+                    <Text className="text-white text-4xl font-bold">%</Text>
+                  </View>
+                </View>
+
+                {/* Influence */}
+                <View className="bg-gray-800 rounded-2xl p-4 mb-4">
+                  <Text className="text-gray-400 mb-2">Influence</Text>
+                  <View className="flex-row">
+                    <Animated.Text className="text-white text-4xl font-bold">
+                      {influenceValue.interpolate({
+                        inputRange: [0, mockAnalysisResults.influence],
+                        outputRange: ["0", `${mockAnalysisResults.influence}`],
+                        extrapolate: "clamp",
+                      })}
+                    </Animated.Text>
+                    <Text className="text-white text-4xl font-bold">/100</Text>
+                  </View>
+                </View>
+
+                {/* Comparison */}
+                <View className="bg-blue-900/30 rounded-2xl p-4 mb-4">
+                  <Text className="text-blue-300 italic text-center text-lg">
+                    "{results?.comparison}"
+                  </Text>
+                </View>
+
+                {/* Exercise Recommendation */}
+                <View className="bg-gray-800 rounded-2xl p-4 mb-6">
+                  <Text className="text-white text-xl font-bold mb-3">Exercise Suggestion</Text>
+                  <Text className="text-gray-300">{results?.exercise}</Text>
+                </View>
+
+                {/* Action Buttons */}
+                <View className="flex-row gap-4 mb-6">
+                  <TouchableOpacity
+                    onPress={resetAnalysis}
+                    className="flex-1 bg-gray-800 rounded-xl p-4 items-center"
+                  >
+                    <Text className="text-white text-lg font-bold">Re-analyze</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          )}
+        </View>
+      </ScrollView>
 
       {/* Bottom Navigation */}
       <BottomNavigation />
