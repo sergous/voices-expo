@@ -76,22 +76,22 @@ cd voices-app
 
 2. Install dependencies:
 ```bash
-npm install
+bun install
 ```
 
 3. Start the development server:
 ```bash
-npx expo start
+bun run start
 ```
 
 4. To run on iOS simulator:
 ```bash
-npx expo run:ios
+bun x expo run:ios
 ```
 
 5. To run on Android emulator:
 ```bash
-npx expo run:android
+bun x expo run:android
 ```
 
 ## Usage Instructions
