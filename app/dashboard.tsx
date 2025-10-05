@@ -9,12 +9,23 @@ import {
   Lock,
   Mic,
   Play,
+  Search,
   Star,
   TrendingUp,
   User,
 } from "lucide-react-native"
-import React, { useState } from "react"
-import { Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
+import React, { useEffect, useState } from "react"
+import {
+  Alert,
+  Dimensions,
+  Image,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native"
+import { supabase, UserProfile } from "../supabase/client"
 
 const { width } = Dimensions.get("window")
 
@@ -71,10 +82,114 @@ const subscriptionPlans = [
   { id: "annual", name: "Annual", price: 500, description: "Save 20% with annual plan" },
 ]
 
+interface Course {
+  id: string
+  title: string
+  instructor: string
+  category: string
+  duration: string
+  price: number
+  image_url: string
+  description?: string
+}
+
 export default function DashboardScreen() {
   const [activeTab, setActiveTab] = useState("home")
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [userName, setUserName] = useState("Alex")
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+  const [courses, setCourses] = useState<Course[]>([])
+  const [filteredCourses, setFilteredCourses] = useState<Course[]>([])
+  const [searchQuery, setSearchQuery] = useState("")
+  const [isLoading, setIsLoading] = useState(true)
+  const [currentStreak, setCurrentStreak] = useState(0)
+
+  // Fetch user profile and courses on component mount
+  useEffect(() => {
+    fetchUserProfile()
+    fetchCourses()
+  }, [])
+
+  // Filter courses based on search query
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setFilteredCourses(courses)
+    } else {
+      const filtered = courses.filter(
+        (course) =>
+          course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          course.instructor.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+      setFilteredCourses(filtered)
+    }
+  }, [searchQuery, courses])
+
+  const fetchUserProfile = async () => {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (user) {
+        const { data: profile, error } = await supabase
+          .from("user_profiles")
+          .select("*")
+          .eq("id", user.id)
+          .single()
+
+        if (error) throw error
+
+        if (profile) {
+          setUserProfile(profile)
+          setUserName(profile.email?.split("@")[0] || "User")
+          setCurrentStreak(profile.streak || 0)
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const fetchCourses = async () => {
+    try {
+      const { data, error } = await supabase.from("courses").select("*").limit(10)
+
+      if (error) throw error
+
+      if (data) {
+        setCourses(data)
+        setFilteredCourses(data)
+      }
+    } catch (error) {
+      console.error("Error fetching courses:", error)
+      // Keep mock data as fallback
+    }
+  }
+
+  const updateStreak = async () => {
+    if (!userProfile) return
+
+    try {
+      const newStreak = currentStreak + 1
+      setCurrentStreak(newStreak)
+
+      const { error } = await supabase
+        .from("user_profiles")
+        .update({ streak: newStreak })
+        .eq("id", userProfile.id)
+
+      if (error) throw error
+    } catch (error) {
+      console.error("Error updating streak:", error)
+    }
+  }
+
+  const handleSubscribe = () => {
+    setIsSubscribed(true)
+    // Here you would integrate with payment system
+    Alert.alert("Success", "Subscription activated!")
+  }
 
   return (
     <View className="flex-1 bg-[#121212]">
@@ -90,6 +205,18 @@ export default function DashboardScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Search Bar */}
+        <View className="mt-4 bg-[#1E1E1E] rounded-xl p-2 flex-row items-center">
+          <Search color="#B3B3B3" size={20} />
+          <TextInput
+            className="flex-1 text-white ml-3"
+            placeholder="Search courses, instructors..."
+            placeholderTextColor="#B3B3B3"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
+
         {/* Subscription Banner */}
         {!isSubscribed && (
           <View className="mt-4 bg-gradient-to-r from-[#1ED760] to-[#2D5BFF] rounded-xl p-4">
@@ -100,7 +227,7 @@ export default function DashboardScreen() {
               </View>
               <TouchableOpacity
                 className="bg-white rounded-full px-4 py-2"
-                onPress={() => setIsSubscribed(true)}
+                onPress={handleSubscribe}
               >
                 <Text className="text-[#1ED760] font-bold">Subscribe</Text>
               </TouchableOpacity>
@@ -135,6 +262,15 @@ export default function DashboardScreen() {
             </View>
             <Text className="text-white text-2xl font-bold mt-2">42h</Text>
             <Text className="text-[#B3B3B3] text-sm mt-1">This month</Text>
+          </View>
+
+          <View className="flex-1 bg-[#1E1E1E] rounded-2xl p-4">
+            <View className="flex-row items-center">
+              <Star color="#FF6B35" size={20} />
+              <Text className="text-white font-bold ml-2">Streak</Text>
+            </View>
+            <Text className="text-white text-2xl font-bold mt-2">{currentStreak}</Text>
+            <Text className="text-[#B3B3B3] text-sm mt-1">days</Text>
           </View>
         </View>
 
