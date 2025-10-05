@@ -1,6 +1,8 @@
 import BottomNavigation from "@/components/BottomNavigation"
 import { Slider } from "@/components/ui/slider"
+import { useLocalSearchParams, useRouter } from "expo-router"
 import {
+  ArrowLeft,
   Clock,
   Download,
   Heart,
@@ -17,8 +19,8 @@ import { Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from "rea
 
 const { width } = Dimensions.get("window")
 
-// Mock data for audio content
-const audioContent = {
+// Default content for when no params are passed
+const defaultContent = {
   id: "1",
   title: "Breathing Techniques for Better Voice Control",
   instructor: "Juliana Rodrigues",
@@ -34,14 +36,45 @@ const audioContent = {
 }
 
 export default function AudioPlayerScreen() {
+  const params = useLocalSearchParams()
+  const router = useRouter()
   const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTime, setCurrentTime] = useState(3.5 * 60) // in seconds
+  const [currentTime, setCurrentTime] = useState(0)
   const [playbackSpeed, setPlaybackSpeed] = useState(1.0)
   const [isLiked, setIsLiked] = useState(false)
   const [downloaded, setDownloaded] = useState(false)
 
-  const totalTime = 12 * 60 + 45 // 12:45 in seconds
-  const progressPercentage = (currentTime / totalTime) * 100
+  // Use dynamic content from navigation params or fallback to default
+  const audioContent = {
+    id: (params.id as string) || defaultContent.id,
+    title: (params.title as string) || defaultContent.title,
+    instructor: defaultContent.instructor,
+    duration: (params.duration as string) || defaultContent.duration,
+    description: defaultContent.description,
+    category: defaultContent.category,
+    isPremium: (params.isPurchased as string) === "true" || defaultContent.isPremium,
+    imageUrl: (params.imageUrl as string) || defaultContent.imageUrl,
+    audioUrl: defaultContent.audioUrl,
+    progress: defaultContent.progress,
+  }
+
+  // Parse duration to seconds for calculations
+  const parseDurationToSeconds = (duration: string) => {
+    const parts = duration.split(" ")
+    if (parts.length === 2) {
+      // Handle "X lessons" format
+      return 30 * 60 // Default 30 minutes for lessons
+    }
+    // Handle "MM:SS" or "M:SS" format
+    const timeParts = duration.split(":")
+    if (timeParts.length === 2) {
+      return parseInt(timeParts[0]) * 60 + parseInt(timeParts[1])
+    }
+    return 30 * 60 // Default fallback
+  }
+
+  const totalTime = parseDurationToSeconds(audioContent.duration)
+  const progressPercentage = totalTime > 0 ? (currentTime / totalTime) * 100 : 0
 
   // Format time from seconds to MM:SS
   const formatTime = (seconds: number) => {
@@ -91,24 +124,79 @@ export default function AudioPlayerScreen() {
 
   return (
     <View className="flex-1 bg-gray-900">
-      <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 100 }}>
-        {/* Header */}
-        <View className="flex-row justify-between items-center px-4 pt-12 pb-4 bg-gray-800">
-          <Text className="text-white text-lg font-bold">Now Playing</Text>
-          <TouchableOpacity>
-            <Settings size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-        </View>
+      {/* Header */}
+      <View className="flex-row justify-between items-center px-4 pt-12 pb-4 bg-gray-800">
+        <TouchableOpacity onPress={() => router.back()}>
+          <ArrowLeft size={24} color="#FFFFFF" />
+        </TouchableOpacity>
+        <Text className="text-white text-lg font-bold">Now Playing</Text>
+        <TouchableOpacity>
+          <Settings size={24} color="#FFFFFF" />
+        </TouchableOpacity>
+      </View>
 
-        {/* Album Art */}
-        <View className="items-center py-8">
-          <Image
-            source={{ uri: audioContent.imageUrl }}
-            className="w-64 h-64 rounded-2xl"
-            resizeMode="cover"
+      {/* Background Album Art with Overlay */}
+      <View className="relative">
+        <Image
+          source={{ uri: audioContent.imageUrl }}
+          className="absolute w-full h-96"
+          resizeMode="cover"
+          blurRadius={2}
+        />
+        {/* Dark overlay for better contrast */}
+        <View className="absolute w-full h-96 bg-black/40" />
+
+        {/* Controls Over Album Art Background */}
+        <View className="relative px-6 pt-6 pb-8">
+          {/* Progress Bar */}
+          <View className="flex-row justify-between mb-2">
+            <Text className="text-white drop-shadow-lg">{formatTime(currentTime)}</Text>
+            <Text className="text-white drop-shadow-lg">{formatTime(totalTime)}</Text>
+          </View>
+          <Slider
+            style={{ width: width - 48, height: 40 }}
+            minValue={0}
+            maxValue={1}
+            value={progressPercentage / 100}
+            onChange={(value) => handleSeek(value)}
           />
-        </View>
 
+          {/* Playback Speed */}
+          <View className="items-center mt-4">
+            <TouchableOpacity
+              onPress={changeSpeed}
+              className="flex-row items-center mb-4 bg-black/20 rounded-full px-3 py-1"
+            >
+              <Clock size={16} color="#FFFFFF" />
+              <Text className="text-white ml-2 drop-shadow-lg">{playbackSpeed}x</Text>
+            </TouchableOpacity>
+
+            {/* Main Controls */}
+            <View className="flex-row items-center justify-center">
+              <TouchableOpacity className="mx-4 bg-white/20 rounded-full p-3">
+                <SkipBack size={24} color="#FFFFFF" />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                className="bg-green-500 rounded-full w-16 h-16 items-center justify-center mx-4 shadow-lg"
+                onPress={togglePlayback}
+              >
+                {isPlaying ? (
+                  <Pause size={32} color="#000000" />
+                ) : (
+                  <Play size={32} color="#000000" />
+                )}
+              </TouchableOpacity>
+
+              <TouchableOpacity className="mx-4 bg-white/20 rounded-full p-3">
+                <SkipForward size={24} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      <ScrollView className="my-20 flex-1" contentContainerStyle={{ paddingBottom: 100 }}>
         {/* Content Info */}
         <View className="px-6">
           <View className="flex-row justify-between items-start">
@@ -135,48 +223,6 @@ export default function AudioPlayerScreen() {
               <Text className="text-white text-xs font-bold">PREMIUM</Text>
             </View>
             <Text className="text-gray-400 ml-3">{audioContent.category}</Text>
-          </View>
-        </View>
-
-        {/* Progress Bar */}
-        <View className="px-6 mt-8">
-          <View className="flex-row justify-between mb-2">
-            <Text className="text-gray-400">{formatTime(currentTime)}</Text>
-            <Text className="text-gray-400">{formatTime(totalTime)}</Text>
-          </View>
-          <Slider
-            style={{ width: width - 48, height: 40 }}
-            minValue={0}
-            maxValue={1}
-            value={progressPercentage / 100}
-            onChange={(value) => handleSeek(value)}
-          />
-        </View>
-
-        {/* Controls */}
-        <View className="items-center mt-6">
-          {/* Playback Speed */}
-          <TouchableOpacity onPress={changeSpeed} className="flex-row items-center mb-6">
-            <Clock size={16} color="#B3B3B3" />
-            <Text className="text-gray-400 ml-2">{playbackSpeed}x</Text>
-          </TouchableOpacity>
-
-          {/* Main Controls */}
-          <View className="flex-row items-center justify-center">
-            <TouchableOpacity className="mx-4">
-              <SkipBack size={32} color="#FFFFFF" />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              className="bg-green-500 rounded-full w-16 h-16 items-center justify-center mx-4"
-              onPress={togglePlayback}
-            >
-              {isPlaying ? <Pause size={32} color="#000000" /> : <Play size={32} color="#000000" />}
-            </TouchableOpacity>
-
-            <TouchableOpacity className="mx-4">
-              <SkipForward size={32} color="#FFFFFF" />
-            </TouchableOpacity>
           </View>
         </View>
 

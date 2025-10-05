@@ -1,4 +1,5 @@
 import BottomNavigation from "@/components/BottomNavigation"
+import { router } from "expo-router"
 import { Download, Library, Lock, Mic, Play, Star, User } from "lucide-react-native"
 import React, { useState } from "react"
 import { Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
@@ -57,6 +58,21 @@ const subscriptionPlans = [
 export default function HomeScreen() {
   const [activeTab, setActiveTab] = useState("home")
   const [isSubscribed, setIsSubscribed] = useState(false)
+
+  const handlePlayContent = (content: any) => {
+    // Navigate to player screen with content data
+    router.push({
+      pathname: "/player",
+      params: {
+        id: content.id,
+        title: content.title,
+        type: content.type,
+        duration: content.duration,
+        imageUrl: content.imageUrl,
+        isPurchased: content.isPurchased.toString(),
+      },
+    })
+  }
 
   return (
     <View className="flex-1 bg-gray-900">
@@ -123,32 +139,60 @@ export default function HomeScreen() {
           <Text className="text-white text-lg font-bold mb-3">Continue Learning</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="max-h-40">
             <View className="flex-row gap-4">
-              <View className="bg-gray-800 rounded-2xl p-4 w-64">
+              <TouchableOpacity
+                className="bg-gray-800 rounded-2xl p-4 w-64"
+                onPress={() =>
+                  handlePlayContent({
+                    id: "2",
+                    title: "Breath Control Mastery",
+                    type: "course",
+                    duration: "8 lessons",
+                    price: 2,
+                    isPurchased: true,
+                    imageUrl:
+                      "https://images.unsplash.com/photo-1480694313141-fce5e697ee25?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8c21hcnRwaG9uZXxlbnwwfHwwfHx8MA%3D%3D",
+                  })
+                }
+              >
                 <View className="flex-row justify-between items-start">
                   <View>
                     <Text className="text-white font-bold">Breath Control Mastery</Text>
                     <Text className="text-gray-400 text-sm">Lesson 3 of 8</Text>
                   </View>
-                  <TouchableOpacity className="bg-green-600 rounded-full p-2">
+                  <View className="bg-green-600 rounded-full p-2">
                     <Play color="white" size={16} />
-                  </TouchableOpacity>
+                  </View>
                 </View>
                 <View className="mt-3 h-2 bg-gray-700 rounded-full">
                   <View className="h-2 bg-green-500 rounded-full w-3/4"></View>
                 </View>
-              </View>
+              </TouchableOpacity>
 
-              <View className="bg-gray-800 rounded-2xl p-4 w-64">
+              <TouchableOpacity
+                className="bg-gray-800 rounded-2xl p-4 w-64"
+                onPress={() =>
+                  handlePlayContent({
+                    id: "5",
+                    title: "Vocal Warmups",
+                    type: "course",
+                    duration: "10 min",
+                    price: 2,
+                    isPurchased: false,
+                    imageUrl:
+                      "https://images.unsplash.com/photo-1635099404457-91c3d0dade3b?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8MyUyMGdyYXBoaWNzfGVufDB8fDB8fHww",
+                  })
+                }
+              >
                 <View className="flex-row justify-between items-start">
                   <View>
                     <Text className="text-white font-bold">Vocal Warmups</Text>
                     <Text className="text-gray-400 text-sm">Not started</Text>
                   </View>
-                  <TouchableOpacity className="bg-gray-700 rounded-full p-2">
+                  <View className="bg-gray-700 rounded-full p-2">
                     <Play color="white" size={16} />
-                  </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             </View>
           </ScrollView>
         </View>
@@ -158,7 +202,11 @@ export default function HomeScreen() {
           <Text className="text-white text-lg font-bold mb-3">Featured Content</Text>
           <View className="gap-4">
             {mockContent.map((item) => (
-              <TouchableOpacity key={item.id} className="bg-gray-800 rounded-2xl overflow-hidden">
+              <TouchableOpacity
+                key={item.id}
+                className="bg-gray-800 rounded-2xl overflow-hidden"
+                onPress={() => item.isPurchased && handlePlayContent(item)}
+              >
                 <View className="flex-row">
                   <Image source={{ uri: item.imageUrl }} className="w-24 h-24 rounded-l-2xl" />
                   <View className="flex-1 p-3 justify-between">
@@ -169,7 +217,13 @@ export default function HomeScreen() {
                     <View className="flex-row justify-between items-center">
                       <View className="flex-row items-center">
                         {item.isPurchased ? (
-                          <TouchableOpacity className="bg-green-600 rounded-full p-2">
+                          <TouchableOpacity
+                            className="bg-green-600 rounded-full p-2"
+                            onPress={(e) => {
+                              e.stopPropagation()
+                              handlePlayContent(item)
+                            }}
+                          >
                             <Play color="white" size={16} />
                           </TouchableOpacity>
                         ) : (
