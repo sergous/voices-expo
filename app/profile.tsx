@@ -1,3 +1,4 @@
+import BottomNavigation from "@/components/BottomNavigation"
 import {
   Bell,
   Calendar,
@@ -171,6 +172,9 @@ const ProfileScreen = () => {
           <Text className="text-white text-base font-medium">Log Out</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      {/* Bottom Navigation */}
+      <BottomNavigation />
     </View>
   )
 }

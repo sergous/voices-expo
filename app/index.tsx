@@ -1,4 +1,5 @@
-import { Download, Home, Library, Lock, Mic, Play, Search, Star, User } from "lucide-react-native"
+import BottomNavigation from "@/components/BottomNavigation"
+import { Download, Library, Lock, Mic, Play, Star, User } from "lucide-react-native"
 import React, { useState } from "react"
 import { Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
 
@@ -191,57 +192,7 @@ export default function HomeScreen() {
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <View className="absolute bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800">
-        <View className="flex-row justify-around py-3">
-          <TouchableOpacity
-            className={`items-center px-4 py-2 rounded-full ${activeTab === "home" ? "bg-gray-800" : ""}`}
-            onPress={() => setActiveTab("home")}
-          >
-            <Home color={activeTab === "home" ? "#1ED760" : "#9CA3AF"} size={24} />
-            <Text
-              className={`text-xs mt-1 ${activeTab === "home" ? "text-green-400" : "text-gray-400"}`}
-            >
-              Home
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className={`items-center px-4 py-2 rounded-full ${activeTab === "search" ? "bg-gray-800" : ""}`}
-            onPress={() => setActiveTab("search")}
-          >
-            <Search color={activeTab === "search" ? "#1ED760" : "#9CA3AF"} size={24} />
-            <Text
-              className={`text-xs mt-1 ${activeTab === "search" ? "text-green-400" : "text-gray-400"}`}
-            >
-              Search
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className={`items-center px-4 py-2 rounded-full ${activeTab === "library" ? "bg-gray-800" : ""}`}
-            onPress={() => setActiveTab("library")}
-          >
-            <Library color={activeTab === "library" ? "#1ED760" : "#9CA3AF"} size={24} />
-            <Text
-              className={`text-xs mt-1 ${activeTab === "library" ? "text-green-400" : "text-gray-400"}`}
-            >
-              Library
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className={`items-center px-4 py-2 rounded-full ${activeTab === "profile" ? "bg-gray-800" : ""}`}
-            onPress={() => setActiveTab("profile")}
-          >
-            <User color={activeTab === "profile" ? "#1ED760" : "#9CA3AF"} size={24} />
-            <Text
-              className={`text-xs mt-1 ${activeTab === "profile" ? "text-green-400" : "text-gray-400"}`}
-            >
-              Profile
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      <BottomNavigation />
     </View>
   )
 }

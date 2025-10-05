@@ -1,14 +1,13 @@
+import BottomNavigation from "@/components/BottomNavigation"
 import {
   Calendar,
   ChevronRight,
   Clock,
   Download,
-  Home,
   Library,
   Lock,
   Mic,
   Play,
-  Search,
   Star,
   TrendingUp,
   User,
@@ -277,57 +276,7 @@ export default function DashboardScreen() {
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <View className="absolute bottom-0 left-0 right-0 bg-[#121212] border-t border-[#1E1E1E]">
-        <View className="flex-row justify-around py-3">
-          <TouchableOpacity
-            className={`items-center px-4 py-2 rounded-full ${activeTab === "home" ? "bg-[#1E1E1E]" : ""}`}
-            onPress={() => setActiveTab("home")}
-          >
-            <Home color={activeTab === "home" ? "#1ED760" : "#9CA3AF"} size={24} />
-            <Text
-              className={`text-xs mt-1 ${activeTab === "home" ? "text-[#1ED760]" : "text-[#B3B3B3]"}`}
-            >
-              Home
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className={`items-center px-4 py-2 rounded-full ${activeTab === "search" ? "bg-[#1E1E1E]" : ""}`}
-            onPress={() => setActiveTab("search")}
-          >
-            <Search color={activeTab === "search" ? "#1ED760" : "#9CA3AF"} size={24} />
-            <Text
-              className={`text-xs mt-1 ${activeTab === "search" ? "text-[#1ED760]" : "text-[#B3B3B3]"}`}
-            >
-              Search
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className={`items-center px-4 py-2 rounded-full ${activeTab === "library" ? "bg-[#1E1E1E]" : ""}`}
-            onPress={() => setActiveTab("library")}
-          >
-            <Library color={activeTab === "library" ? "#1ED760" : "#9CA3AF"} size={24} />
-            <Text
-              className={`text-xs mt-1 ${activeTab === "library" ? "text-[#1ED760]" : "text-[#B3B3B3]"}`}
-            >
-              Library
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className={`items-center px-4 py-2 rounded-full ${activeTab === "profile" ? "bg-[#1E1E1E]" : ""}`}
-            onPress={() => setActiveTab("profile")}
-          >
-            <User color={activeTab === "profile" ? "#1ED760" : "#9CA3AF"} size={24} />
-            <Text
-              className={`text-xs mt-1 ${activeTab === "profile" ? "text-[#1ED760]" : "text-[#B3B3B3]"}`}
-            >
-              Profile
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      <BottomNavigation />
     </View>
   )
 }

@@ -1,3 +1,4 @@
+import BottomNavigation from "@/components/BottomNavigation"
 import { ArrowLeft, Mic } from "lucide-react-native"
 import { cssInterop } from "nativewind"
 import React, { useRef, useState } from "react"
@@ -261,15 +262,8 @@ export default function VoiceAnalysisScreen() {
         )}
       </View>
 
-      {/* Bottom: Premium CTA Button */}
-      <TouchableOpacity
-        className="bg-[#2D5BFF] rounded-xl p-4 items-center mt-4"
-        onPress={navigateToPayment}
-        activeOpacity={0.8}
-        style={{ transform: [{ scale: scaleAnimation }] }}
-      >
-        <Text className="text-white text-lg font-bold">Unlock Premium Analysis: $10/month</Text>
-      </TouchableOpacity>
+      {/* Bottom Navigation */}
+      <BottomNavigation />
     </View>
   )
 }

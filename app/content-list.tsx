@@ -1,3 +1,4 @@
+import BottomNavigation from "@/components/BottomNavigation"
 import { Mic, Play, Search, Unlock } from "lucide-react-native"
 import React, { useEffect, useState } from "react"
 import { Animated, SectionList, Text, TextInput, TouchableOpacity, View } from "react-native"
@@ -214,18 +215,8 @@ const ContentListScreen = () => {
         onRefresh={() => setIsLoading(true)}
       />
 
-      {/* Subscription Banner */}
-      <View className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-t-3xl">
-        <View className="flex-row items-center justify-between">
-          <View>
-            <Text className="text-white font-bold text-lg">Get Unlimited Access</Text>
-            <Text className="text-white text-sm">Unlock all courses for $50/month</Text>
-          </View>
-          <TouchableOpacity className="bg-white rounded-full px-6 py-3">
-            <Text className="text-green-500 font-bold">Subscribe</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      {/* Bottom Navigation */}
+      <BottomNavigation />
     </View>
   )
 }
