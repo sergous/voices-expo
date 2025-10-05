@@ -1,11 +1,28 @@
+import { useRouter } from "expo-router"
 import { Apple, BookOpen, ChevronRight, Mail, Music, Smartphone, User } from "lucide-react-native"
 import React, { useEffect, useState } from "react"
-import { Animated, Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
+import {
+  Alert,
+  Animated,
+  Image,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native"
+import { supabase } from "../lib/supabase"
 
 export default function OnboardingScreen() {
   const [currentStep, setCurrentStep] = useState(0)
   const [selectedGoals, setSelectedGoals] = useState<string[]>([])
   const [fadeAnim] = useState(new Animated.Value(0))
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [fullName, setFullName] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSignUp, setIsSignUp] = useState(true)
+  const router = useRouter()
 
   // Fade-in animation
   useEffect(() => {
@@ -35,6 +52,100 @@ export default function OnboardingScreen() {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1)
       fadeAnim.setValue(0)
+    }
+  }
+
+  const handleEmailAuth = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please fill in all fields")
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      const { data, error } = isSignUp
+        ? await supabase.auth.signUp({
+            email,
+            password,
+          })
+        : await supabase.auth.signInWithPassword({
+            email,
+            password,
+          })
+
+      if (error) throw error
+
+      if (data.user) {
+        // Create user profile
+        const { error: profileError } = await supabase.from("user_profiles").insert([
+          {
+            id: data.user.id,
+            email: data.user.email!,
+            goal: selectedGoals.join(", "),
+            subscription_status: "free",
+            streak: 0,
+          },
+        ])
+
+        if (profileError) throw profileError
+
+        router.replace("/dashboard")
+      }
+    } catch (error: any) {
+      Alert.alert("Error", error.message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleOAuthLogin = async (provider: "apple" | "google") => {
+    setIsLoading(true)
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: "voices-expo://dashboard",
+        },
+      })
+
+      if (error) throw error
+
+      // For OAuth, we'll handle profile creation in the dashboard after auth
+    } catch (error: any) {
+      Alert.alert("Error", error.message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleFinishSetup = async () => {
+    if (!fullName.trim()) {
+      Alert.alert("Error", "Please enter your full name")
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      if (user) {
+        const { error } = await supabase
+          .from("user_profiles")
+          .update({
+            goal: selectedGoals.join(", "),
+          })
+          .eq("id", user.id)
+
+        if (error) throw error
+
+        router.replace("/dashboard")
+      }
+    } catch (error: any) {
+      Alert.alert("Error", error.message)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -72,29 +183,70 @@ export default function OnboardingScreen() {
       case 1:
         return (
           <Animated.View style={{ opacity: fadeAnim }} className="flex-1">
-            <Text className="text-3xl font-bold text-white text-center mb-2">Create Account</Text>
+            <Text className="text-3xl font-bold text-white text-center mb-2">
+              {isSignUp ? "Create Account" : "Log In"}
+            </Text>
             <Text className="text-gray-300 text-center mb-10">Join our community of learners</Text>
 
             <View className="flex-1">
-              <TouchableOpacity className="bg-white py-4 rounded-xl flex-row items-center justify-center mb-4">
-                <Mail color="#1ED760" size={24} className="mr-3" />
-                <Text className="text-black font-bold text-lg">Continue with Email</Text>
+              {/* Email/Password Form */}
+              <View className="mb-6">
+                <TextInput
+                  className="bg-gray-800 text-white p-4 rounded-xl mb-4"
+                  placeholder="Email"
+                  placeholderTextColor="#B3B3B3"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+                <TextInput
+                  className="bg-gray-800 text-white p-4 rounded-xl"
+                  placeholder="Password"
+                  placeholderTextColor="#B3B3B3"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                />
+              </View>
+
+              <TouchableOpacity
+                onPress={handleEmailAuth}
+                disabled={isLoading}
+                className="bg-[#1ED760] py-4 rounded-xl flex-row items-center justify-center mb-4"
+              >
+                <Mail color="white" size={24} className="mr-3" />
+                <Text className="text-white font-bold text-lg">
+                  {isLoading ? "Loading..." : isSignUp ? "Sign Up" : "Log In"}
+                </Text>
               </TouchableOpacity>
 
-              <TouchableOpacity className="bg-white py-4 rounded-xl flex-row items-center justify-center mb-4">
+              <TouchableOpacity
+                onPress={() => handleOAuthLogin("apple")}
+                disabled={isLoading}
+                className="bg-white py-4 rounded-xl flex-row items-center justify-center mb-4"
+              >
                 <Apple color="#1ED760" size={24} className="mr-3" />
                 <Text className="text-black font-bold text-lg">Continue with Apple</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity className="bg-white py-4 rounded-xl flex-row items-center justify-center mb-4">
+              <TouchableOpacity
+                onPress={() => handleOAuthLogin("google")}
+                disabled={isLoading}
+                className="bg-white py-4 rounded-xl flex-row items-center justify-center mb-4"
+              >
                 <Smartphone color="#1ED760" size={24} className="mr-3" />
                 <Text className="text-black font-bold text-lg">Continue with Google</Text>
               </TouchableOpacity>
 
               <View className="flex-row items-center justify-center mt-8">
-                <Text className="text-gray-400">Already have an account?</Text>
-                <TouchableOpacity>
-                  <Text className="text-[#1ED760] font-bold ml-2">Log In</Text>
+                <Text className="text-gray-400">
+                  {isSignUp ? "Already have an account?" : "Don't have an account?"}
+                </Text>
+                <TouchableOpacity onPress={() => setIsSignUp(!isSignUp)}>
+                  <Text className="text-[#1ED760] font-bold ml-2">
+                    {isSignUp ? "Log In" : "Sign Up"}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -190,19 +342,28 @@ export default function OnboardingScreen() {
 
               <View className="bg-gray-800 rounded-xl p-4 mb-6">
                 <Text className="text-gray-400 mb-2">Full Name</Text>
-                <Text className="text-white text-lg">Juliana Smith</Text>
+                <TextInput
+                  className="text-white text-lg"
+                  placeholder="Enter your full name"
+                  placeholderTextColor="#B3B3B3"
+                  value={fullName}
+                  onChangeText={setFullName}
+                />
               </View>
 
               <View className="bg-gray-800 rounded-xl p-4 mb-6">
                 <Text className="text-gray-400 mb-2">Email</Text>
-                <Text className="text-white text-lg">juliana@example.com</Text>
+                <Text className="text-white text-lg">{email}</Text>
               </View>
 
               <TouchableOpacity
-                onPress={handleContinue}
+                onPress={handleFinishSetup}
+                disabled={isLoading}
                 className="bg-[#1ED760] py-4 rounded-xl flex-row items-center justify-center mt-8"
               >
-                <Text className="text-white font-bold text-lg">Finish Setup</Text>
+                <Text className="text-white font-bold text-lg">
+                  {isLoading ? "Loading..." : "Finish Setup"}
+                </Text>
               </TouchableOpacity>
             </View>
           </Animated.View>
