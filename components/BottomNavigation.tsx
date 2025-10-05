@@ -1,5 +1,5 @@
 import { router, usePathname } from "expo-router"
-import { Activity, Home, Library, User } from "lucide-react-native"
+import { Home, Library, User } from "lucide-react-native"
 import React from "react"
 import { Text, TouchableOpacity, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
@@ -20,7 +20,6 @@ export default function BottomNavigation({ className = "" }: BottomNavigationPro
   const getTabName = (path: string) => {
     if (path === "/" || path === "/index") return "home"
     if (path.includes("/content-list")) return "library"
-    if (path.includes("/voice-analysis")) return "analysis"
     if (path.includes("/profile")) return "profile"
     return "home"
   }
@@ -39,12 +38,6 @@ export default function BottomNavigation({ className = "" }: BottomNavigationPro
       title: "Library",
       icon: Library,
       href: "/content-list",
-    },
-    {
-      name: "analysis",
-      title: "Analysis",
-      icon: Activity,
-      href: "/voice-analysis",
     },
     {
       name: "profile",
