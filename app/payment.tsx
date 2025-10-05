@@ -58,7 +58,7 @@ export default function PaymentScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-900">
+    <SafeAreaView className="flex-1 bg-gray-900" edges={["top", "bottom"]}>
       {/* Header with Back Button */}
       <View className="bg-gray-800 px-4 py-4">
         <View className="flex-row items-center">
@@ -202,29 +202,28 @@ export default function PaymentScreen() {
       </ScrollView>
 
       {/* Payment Button with Safe Area */}
-      <SafeAreaView className="bg-gray-900 border-t border-gray-800">
-        <View className="p-4">
-          <TouchableOpacity
-            className="bg-green-500 rounded-xl py-4 flex-row items-center justify-center"
-            onPress={handlePayment}
-            disabled={isProcessing}
-          >
-            {isProcessing ? (
-              <>
-                <Lock color="white" size={20} />
-                <Text className="text-white font-bold text-lg ml-2">Processing Payment...</Text>
-              </>
-            ) : (
-              <>
-                <Lock color="white" size={20} />
-                <Text className="text-white font-bold text-lg ml-2">
-                  Pay ${(parseFloat(itemPrice) * 1.07).toFixed(2)}
-                </Text>
-              </>
-            )}
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
+      {/* <SafeAreaView className="bg-gray-900 border-t border-gray-800"> */}
+      <View className="p-4">
+        <TouchableOpacity
+          className="bg-green-500 rounded-xl py-4 flex-row items-center justify-center"
+          onPress={handlePayment}
+          disabled={isProcessing}
+        >
+          {isProcessing ? (
+            <>
+              <Lock color="white" size={20} />
+              <Text className="text-white font-bold text-lg ml-2">Processing Payment...</Text>
+            </>
+          ) : (
+            <>
+              <Lock color="white" size={20} />
+              <Text className="text-white font-bold text-lg ml-2">
+                Pay ${(parseFloat(itemPrice) * 1.07).toFixed(2)}
+              </Text>
+            </>
+          )}
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   )
 }
