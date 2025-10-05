@@ -260,7 +260,6 @@ const ContentListScreen = () => {
         renderSectionHeader={renderSectionHeader}
         ListHeaderComponent={renderListHeader}
         className="flex-1"
-        contentContainerStyle={{ paddingBottom: 120 }}
         refreshing={isRefreshing}
         onRefresh={handleRefresh}
         showsVerticalScrollIndicator={false}

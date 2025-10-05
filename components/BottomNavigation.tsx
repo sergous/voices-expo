@@ -2,7 +2,7 @@ import { router, usePathname } from "expo-router"
 import { Home, Library, User } from "lucide-react-native"
 import React from "react"
 import { Text, TouchableOpacity, View } from "react-native"
-import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 
 interface BottomNavigationProps {
   className?: string
@@ -48,13 +48,11 @@ export default function BottomNavigation({ className = "" }: BottomNavigationPro
   ]
 
   return (
-    <View
-      className={`absolute bottom-0 left-0 right-0 bg-[#121212] border-t border-[#1E1E1E] z-50 ${className}`}
-      style={{
-        paddingBottom: Math.max(insets.bottom, 20), // Use safe area insets with minimum fallback
-      }}
+    <SafeAreaView
+      edges={["bottom"]}
+      className={`bottom-0 left-0 right-0 bg-[#121212] border-t border-[#1E1E1E] ${className}`}
     >
-      <View className="flex-row justify-around py-3 px-4">
+      <View className="flex-row justify-around pt-2 px-4">
         {tabs.map((tab) => (
           <TouchableOpacity
             key={tab.name}
@@ -73,6 +71,6 @@ export default function BottomNavigation({ className = "" }: BottomNavigationPro
           </TouchableOpacity>
         ))}
       </View>
-    </View>
+    </SafeAreaView>
   )
 }

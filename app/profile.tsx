@@ -193,7 +193,7 @@ const ProfileScreen = () => {
             {/* Logout Button */}
             <TouchableOpacity
               onPress={handleLogout}
-              className="flex-row items-center justify-center bg-[#FF5C5C] rounded-xl p-4 mb-36 mt-36"
+              className="flex-row items-center justify-center bg-[#FF5C5C] rounded-xl p-4 mt-16"
             >
               <LogOut color="white" size={20} className="mr-2" />
               <Text className="text-white text-base font-medium">Log Out</Text>
