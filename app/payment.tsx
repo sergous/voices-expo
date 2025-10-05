@@ -1,6 +1,8 @@
-import { CheckCircle, CreditCard, Lock, Shield, Smartphone } from "lucide-react-native"
+import { router, useLocalSearchParams } from "expo-router"
+import { ArrowLeft, CheckCircle, CreditCard, Lock, Shield, Smartphone } from "lucide-react-native"
 import React, { useState } from "react"
 import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
 
 export default function PaymentScreen() {
   const [cardNumber, setCardNumber] = useState("")
@@ -8,6 +10,13 @@ export default function PaymentScreen() {
   const [cvv, setCvv] = useState("")
   const [name, setName] = useState("")
   const [isProcessing, setIsProcessing] = useState(false)
+
+  // Get item details from navigation params
+  const params = useLocalSearchParams()
+  const itemTitle = (params.title as string) || "Premium Content"
+  const itemPrice = (params.price as string) || "2.00"
+  const itemType = (params.type as string) || "Content"
+  const itemDuration = (params.duration as string) || ""
 
   const formatCardNumber = (text: string) => {
     const cleaned = text.replace(/\D/g, "")
@@ -49,11 +58,19 @@ export default function PaymentScreen() {
   }
 
   return (
-    <View className="flex-1 bg-gray-900">
-      {/* Header */}
-      <View className="bg-gray-800 p-4">
-        <Text className="text-white text-2xl font-bold text-center">Secure Checkout</Text>
-        <Text className="text-gray-400 text-center mt-1">Powered by Stripe</Text>
+    <SafeAreaView className="flex-1 bg-gray-900">
+      {/* Header with Back Button */}
+      <View className="bg-gray-800 px-4 py-4">
+        <View className="flex-row items-center">
+          <TouchableOpacity className="p-2 mr-3" onPress={() => router.back()}>
+            <ArrowLeft color="#fff" size={24} />
+          </TouchableOpacity>
+          <View className="flex-1">
+            <Text className="text-white text-xl font-bold text-center">Secure Checkout</Text>
+            <Text className="text-gray-400 text-center text-sm mt-1">Powered by Stripe</Text>
+          </View>
+          <View style={{ width: 40 }} />
+        </View>
       </View>
 
       <ScrollView className="flex-1 p-4">
@@ -67,21 +84,30 @@ export default function PaymentScreen() {
         <View className="bg-gray-800 rounded-xl p-4 mb-6">
           <Text className="text-white text-lg font-bold mb-3">Order Summary</Text>
 
+          <View className="mb-3">
+            <Text className="text-white font-medium">{itemTitle}</Text>
+            <Text className="text-gray-400 text-sm">
+              {itemType} • {itemDuration}
+            </Text>
+          </View>
+
           <View className="flex-row justify-between mb-2">
-            <Text className="text-gray-400">Premium Content</Text>
-            <Text className="text-white">$2.00</Text>
+            <Text className="text-gray-400">Subtotal</Text>
+            <Text className="text-white">${itemPrice}</Text>
           </View>
 
           <View className="flex-row justify-between mb-2">
             <Text className="text-gray-400">Tax</Text>
-            <Text className="text-white">$0.14</Text>
+            <Text className="text-white">${(parseFloat(itemPrice) * 0.07).toFixed(2)}</Text>
           </View>
 
           <View className="border-t border-gray-700 my-2" />
 
           <View className="flex-row justify-between">
             <Text className="text-white font-bold">Total</Text>
-            <Text className="text-white font-bold">$2.14</Text>
+            <Text className="text-white font-bold">
+              ${(parseFloat(itemPrice) * 1.07).toFixed(2)}
+            </Text>
           </View>
         </View>
 
@@ -175,26 +201,30 @@ export default function PaymentScreen() {
         </View>
       </ScrollView>
 
-      {/* Payment Button */}
-      <View className="p-4 bg-gray-900 border-t border-gray-800">
-        <TouchableOpacity
-          className="bg-green-500 rounded-xl py-4 flex-row items-center justify-center"
-          onPress={handlePayment}
-          disabled={isProcessing}
-        >
-          {isProcessing ? (
-            <>
-              <Lock color="white" size={20} />
-              <Text className="text-white font-bold text-lg ml-2">Processing Payment...</Text>
-            </>
-          ) : (
-            <>
-              <Lock color="white" size={20} />
-              <Text className="text-white font-bold text-lg ml-2">Pay $2.14</Text>
-            </>
-          )}
-        </TouchableOpacity>
-      </View>
-    </View>
+      {/* Payment Button with Safe Area */}
+      <SafeAreaView className="bg-gray-900 border-t border-gray-800">
+        <View className="p-4">
+          <TouchableOpacity
+            className="bg-green-500 rounded-xl py-4 flex-row items-center justify-center"
+            onPress={handlePayment}
+            disabled={isProcessing}
+          >
+            {isProcessing ? (
+              <>
+                <Lock color="white" size={20} />
+                <Text className="text-white font-bold text-lg ml-2">Processing Payment...</Text>
+              </>
+            ) : (
+              <>
+                <Lock color="white" size={20} />
+                <Text className="text-white font-bold text-lg ml-2">
+                  Pay ${(parseFloat(itemPrice) * 1.07).toFixed(2)}
+                </Text>
+              </>
+            )}
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    </SafeAreaView>
   )
 }

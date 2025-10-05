@@ -1,4 +1,5 @@
 import BottomNavigation from "@/components/BottomNavigation"
+import { router } from "expo-router"
 import {
   Bell,
   Calendar,
@@ -50,6 +51,28 @@ const ProfileScreen = () => {
   const handleLogout = () => {
     // In a real app, this would handle the logout logic
     console.log("User logged out")
+  }
+
+  const handleAccountOptionPress = (optionTitle: string) => {
+    switch (optionTitle) {
+      case "Payment Methods":
+        router.push("/payment")
+        break
+      case "Notifications":
+        console.log("Navigate to notifications")
+        break
+      case "Security":
+        console.log("Navigate to security")
+        break
+      case "Settings":
+        console.log("Navigate to settings")
+        break
+      case "Help & Support":
+        console.log("Navigate to help & support")
+        break
+      default:
+        break
+    }
   }
 
   return (
@@ -157,6 +180,7 @@ const ProfileScreen = () => {
               <TouchableOpacity
                 key={option.id}
                 className="flex-row items-center bg-[#1E1E1E] rounded-xl p-4 mb-3"
+                onPress={() => handleAccountOptionPress(option.title)}
               >
                 <View className="mr-4">{option.icon}</View>
                 <Text className="text-white text-base flex-1">{option.title}</Text>

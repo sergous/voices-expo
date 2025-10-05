@@ -227,7 +227,24 @@ export default function HomeScreen() {
                             <Play color="white" size={16} />
                           </TouchableOpacity>
                         ) : (
-                          <TouchableOpacity className="bg-blue-600 rounded-full px-3 py-1 flex-row items-center">
+                          <TouchableOpacity
+                            className="bg-blue-600 rounded-full px-3 py-1 flex-row items-center"
+                            onPress={(e) => {
+                              e.stopPropagation()
+                              // Navigate to payment screen with item data
+                              router.push({
+                                pathname: "/payment",
+                                params: {
+                                  id: item.id,
+                                  title: item.title,
+                                  price: item.price,
+                                  type: item.type,
+                                  duration: item.duration,
+                                  imageUrl: item.imageUrl,
+                                },
+                              })
+                            }}
+                          >
                             <Lock color="white" size={14} />
                             <Text className="text-white text-sm ml-1">${item.price}</Text>
                           </TouchableOpacity>
