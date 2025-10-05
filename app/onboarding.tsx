@@ -81,7 +81,7 @@ export default function OnboardingScreen() {
           {
             id: data.user.id,
             email: data.user.email!,
-            goal: selectedGoals.join(", "),
+            goal: selectedGoals.map((g) => g.toLowerCase()).join(", "),
             subscription_status: "free",
             streak: 0,
           },
@@ -101,7 +101,7 @@ export default function OnboardingScreen() {
   const handleOAuthLogin = async (provider: "apple" | "google") => {
     setIsLoading(true)
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
           redirectTo: "voices-expo://dashboard",
@@ -110,7 +110,7 @@ export default function OnboardingScreen() {
 
       if (error) throw error
 
-      // For OAuth, we'll handle profile creation in the dashboard after auth
+      // OAuth will redirect the user, profile creation will be handled after redirect
     } catch (error: any) {
       Alert.alert("Error", error.message)
     } finally {
@@ -134,7 +134,7 @@ export default function OnboardingScreen() {
         const { error } = await supabase
           .from("user_profiles")
           .update({
-            goal: selectedGoals.join(", "),
+            goal: selectedGoals.map((g) => g.toLowerCase()).join(", "),
           })
           .eq("id", user.id)
 
@@ -300,18 +300,39 @@ export default function OnboardingScreen() {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => handleGoalSelect("Both")}
-                className={`border-2 rounded-2xl p-6 mb-6 ${selectedGoals.includes("Both") ? "border-[#1ED760] bg-[#1ED760]/10" : "border-gray-700"}`}
+                onPress={() => handleGoalSelect("Shadowing")}
+                className={`border-2 rounded-2xl p-6 mb-6 ${selectedGoals.includes("Shadowing") ? "border-[#1ED760] bg-[#1ED760]/10" : "border-gray-700"}`}
               >
                 <View className="flex-row items-center">
-                  <User color={selectedGoals.includes("Both") ? "#1ED760" : "#B3B3B3"} size={32} />
+                  <User
+                    color={selectedGoals.includes("Shadowing") ? "#1ED760" : "#B3B3B3"}
+                    size={32}
+                  />
                   <Text
-                    className={`text-xl font-bold ml-4 ${selectedGoals.includes("Both") ? "text-white" : "text-gray-300"}`}
+                    className={`text-xl font-bold ml-4 ${selectedGoals.includes("Shadowing") ? "text-white" : "text-gray-300"}`}
                   >
-                    Both
+                    Shadowing
                   </Text>
                 </View>
-                <Text className="text-gray-400 mt-2 ml-12">All of the above</Text>
+                <Text className="text-gray-400 mt-2 ml-12">Practice with voice tracks</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => handleGoalSelect("Analysis")}
+                className={`border-2 rounded-2xl p-6 mb-6 ${selectedGoals.includes("Analysis") ? "border-[#1ED760] bg-[#1ED760]/10" : "border-gray-700"}`}
+              >
+                <View className="flex-row items-center">
+                  <Music
+                    color={selectedGoals.includes("Analysis") ? "#1ED760" : "#B3B3B3"}
+                    size={32}
+                  />
+                  <Text
+                    className={`text-xl font-bold ml-4 ${selectedGoals.includes("Analysis") ? "text-white" : "text-gray-300"}`}
+                  >
+                    Analysis
+                  </Text>
+                </View>
+                <Text className="text-gray-400 mt-2 ml-12">Voice analysis and feedback</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
