@@ -1,4 +1,5 @@
 import BottomNavigation from "@/components/BottomNavigation"
+import { useRouter } from "expo-router"
 import { Mic, Play, Search, Unlock } from "lucide-react-native"
 import React, { useEffect, useState } from "react"
 import { Animated, SectionList, Text, TextInput, TouchableOpacity, View } from "react-native"
@@ -87,10 +88,12 @@ const groupByCategory = (items: typeof mockCourses) => {
 }
 
 const ContentListScreen = () => {
+  const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const [activeFilter, setActiveFilter] = useState("All")
   const [sections, setSections] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   // Animation values
   const fadeAnim = React.useRef(new Animated.Value(0)).current
@@ -115,17 +118,29 @@ const ContentListScreen = () => {
     fetchData()
   }, [])
 
-  // Filter items based on search and category
-  const filteredSections = sections
-    .map((section) => {
-      const filteredData = section.data.filter((item: any) => {
-        const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase())
-        const matchesFilter = activeFilter === "All" || item.category === activeFilter
-        return matchesSearch && matchesFilter
+  const handleRefresh = () => {
+    setIsRefreshing(true)
+    // Simulate refreshing data
+    setTimeout(() => {
+      const groupedData = groupByCategory(mockCourses)
+      setSections(groupedData)
+      setIsRefreshing(false)
+    }, 1000)
+  }
+
+  // Filter items based on search and category - memoized for performance
+  const filteredSections = React.useMemo(() => {
+    return sections
+      .map((section) => {
+        const filteredData = section.data.filter((item: any) => {
+          const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase())
+          const matchesFilter = activeFilter === "All" || item.category === activeFilter
+          return matchesSearch && matchesFilter
+        })
+        return { ...section, data: filteredData }
       })
-      return { ...section, data: filteredData }
-    })
-    .filter((section) => section.data.length > 0)
+      .filter((section) => section.data.length > 0)
+  }, [sections, searchQuery, activeFilter])
 
   const renderFixedHeader = () => (
     <SafeAreaView className="bg-gray-900 z-10">
@@ -173,10 +188,7 @@ const ContentListScreen = () => {
   )
 
   const renderCourseItem = ({ item }: { item: any }) => (
-    <Animated.View
-      style={{ opacity: fadeAnim }}
-      className="bg-gray-800 rounded-2xl mb-4 overflow-hidden"
-    >
+    <View className="bg-gray-800 rounded-2xl mb-4 overflow-hidden mx-4">
       <View className="flex-row p-4">
         <View className="bg-gray-700 rounded-xl w-16 h-16 items-center justify-center mr-4">
           <Mic color="#1ED760" size={24} />
@@ -187,13 +199,40 @@ const ContentListScreen = () => {
         </View>
         <View className="flex-row items-center">
           {item.isPurchased ? (
-            <TouchableOpacity className="bg-green-500 rounded-full p-2">
+            <TouchableOpacity
+              className="bg-green-500 rounded-full p-2"
+              onPress={() =>
+                router.push({
+                  pathname: "/player",
+                  params: {
+                    id: item.id,
+                    title: item.title,
+                    duration: item.duration,
+                    imageUrl: item.imageUrl,
+                    isPurchased: "true",
+                  },
+                })
+              }
+            >
               <Play color="white" size={16} />
             </TouchableOpacity>
           ) : (
             <View className="items-center">
-              <TouchableOpacity className="bg-blue-500 rounded-full px-3 py-1 mb-1">
-                <Text className="text-white text-xs font-bold">$2</Text>
+              <TouchableOpacity
+                className="bg-blue-500 rounded-full px-3 py-1 mb-1"
+                onPress={() =>
+                  router.push({
+                    pathname: "/payment",
+                    params: {
+                      title: item.title,
+                      price: item.price.toString(),
+                      type: "Course",
+                      duration: item.duration,
+                    },
+                  })
+                }
+              >
+                <Text className="text-white text-xs font-bold">${item.price}</Text>
               </TouchableOpacity>
               <TouchableOpacity>
                 <Unlock color="#B3B3B3" size={16} />
@@ -202,7 +241,7 @@ const ContentListScreen = () => {
           )}
         </View>
       </View>
-    </Animated.View>
+    </View>
   )
 
   const renderSectionHeader = ({ section }: { section: any }) => (
@@ -222,8 +261,8 @@ const ContentListScreen = () => {
         ListHeaderComponent={renderListHeader}
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 120 }}
-        refreshing={isLoading}
-        onRefresh={() => setIsLoading(true)}
+        refreshing={isRefreshing}
+        onRefresh={handleRefresh}
         showsVerticalScrollIndicator={false}
       />
 
