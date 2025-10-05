@@ -1,15 +1,7 @@
+import { Slider } from "@/components/ui/slider"
 import { ArrowLeft, Music, Pause, Play, SkipForward, Trophy } from "lucide-react-native"
 import React, { useEffect, useState } from "react"
-import {
-  Animated,
-  Dimensions,
-  Image,
-  ScrollView,
-  Slider,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native"
+import { Animated, Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
 
 const { width } = Dimensions.get("window")
 
@@ -258,13 +250,10 @@ export default function VoiceShadowingScreen() {
               <Text className="text-gray-400 mr-2">Pitch:</Text>
               <Slider
                 style={{ flex: 1, height: 40 }}
-                minimumValue={-12}
-                maximumValue={12}
+                minValue={-12}
+                maxValue={12}
                 value={playbackSpeed}
-                onValueChange={setPlaybackSpeed}
-                minimumTrackTintColor="#1ED760"
-                maximumTrackTintColor="#3E3E3E"
-                thumbStyle={{ backgroundColor: "#1ED760", width: 16, height: 16, borderRadius: 8 }}
+                onChange={setPlaybackSpeed}
               />
               <Text className="text-white ml-2 w-10 text-center">
                 {playbackSpeed > 0 ? `+${playbackSpeed}` : playbackSpeed}

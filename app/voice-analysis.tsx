@@ -1,4 +1,4 @@
-import { ArrowLeft, Microphone } from "lucide-react-native"
+import { ArrowLeft, Mic } from "lucide-react-native"
 import { cssInterop } from "nativewind"
 import React, { useRef, useState } from "react"
 import {
@@ -159,7 +159,7 @@ export default function VoiceAnalysisScreen() {
                 },
               ]}
             >
-              <Microphone size={56} color="white" strokeWidth={1.5} />
+              <Mic size={56} color="white" strokeWidth={1.5} />
               {isRecording && (
                 <View className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full items-center justify-center">
                   <View className="w-3 h-3 bg-white rounded-full" />
@@ -195,54 +195,43 @@ export default function VoiceAnalysisScreen() {
               {/* Voice Age */}
               <View className="bg-gray-800 rounded-2xl p-4 mb-4">
                 <Text className="text-gray-400 mb-2">Voice Age</Text>
-                <Text className="text-white text-4xl font-bold">
-                  <Animated.Text>
-                    {voiceAgeValue
-                      .interpolate({
-                        inputRange: [0, mockAnalysisResults.voiceAge],
-                        outputRange: ["0", `${mockAnalysisResults.voiceAge}`],
-                        extrapolate: "clamp",
-                      })
-                      .__getValue()
-                      .toFixed(0)}
-                  </Animated.Text>
-                </Text>
+                <Animated.Text className="text-white text-4xl font-bold">
+                  {voiceAgeValue.interpolate({
+                    inputRange: [0, mockAnalysisResults.voiceAge],
+                    outputRange: ["0", `${mockAnalysisResults.voiceAge}`],
+                    extrapolate: "clamp",
+                  })}
+                </Animated.Text>
               </View>
 
               {/* Tension */}
               <View className="bg-gray-800 rounded-2xl p-4 mb-4">
                 <Text className="text-gray-400 mb-2">Tension</Text>
-                <Text className="text-white text-4xl font-bold">
-                  <Animated.Text>
-                    {tensionValue
-                      .interpolate({
-                        inputRange: [0, mockAnalysisResults.tension],
-                        outputRange: ["0", `${mockAnalysisResults.tension}`],
-                        extrapolate: "clamp",
-                      })
-                      .__getValue()
-                      .toFixed(0)}
-                    %
+                <View className="flex-row">
+                  <Animated.Text className="text-white text-4xl font-bold">
+                    {tensionValue.interpolate({
+                      inputRange: [0, mockAnalysisResults.tension],
+                      outputRange: ["0", `${mockAnalysisResults.tension}`],
+                      extrapolate: "clamp",
+                    })}
                   </Animated.Text>
-                </Text>
+                  <Text className="text-white text-4xl font-bold">%</Text>
+                </View>
               </View>
 
               {/* Influence */}
               <View className="bg-gray-800 rounded-2xl p-4 mb-4">
                 <Text className="text-gray-400 mb-2">Influence</Text>
-                <Text className="text-white text-4xl font-bold">
-                  <Animated.Text>
-                    {influenceValue
-                      .interpolate({
-                        inputRange: [0, mockAnalysisResults.influence],
-                        outputRange: ["0", `${mockAnalysisResults.influence}`],
-                        extrapolate: "clamp",
-                      })
-                      .__getValue()
-                      .toFixed(0)}
-                    /100
+                <View className="flex-row">
+                  <Animated.Text className="text-white text-4xl font-bold">
+                    {influenceValue.interpolate({
+                      inputRange: [0, mockAnalysisResults.influence],
+                      outputRange: ["0", `${mockAnalysisResults.influence}`],
+                      extrapolate: "clamp",
+                    })}
                   </Animated.Text>
-                </Text>
+                  <Text className="text-white text-4xl font-bold">/100</Text>
+                </View>
               </View>
 
               {/* Comparison */}
@@ -299,7 +288,7 @@ const styles = StyleSheet.create({
 })
 
 // Add cssInterop for any components that need className support
-cssInterop(Microphone, {
+cssInterop(Mic, {
   className: "style",
 })
 cssInterop(ArrowLeft, {

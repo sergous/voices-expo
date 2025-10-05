@@ -1,3 +1,4 @@
+import { Slider } from "@/components/ui/slider"
 import {
   Clock,
   Download,
@@ -11,7 +12,7 @@ import {
   User,
 } from "lucide-react-native"
 import React, { useEffect, useState } from "react"
-import { Dimensions, Image, Slider, Text, TouchableOpacity, View } from "react-native"
+import { Dimensions, Image, Text, TouchableOpacity, View } from "react-native"
 
 const { width } = Dimensions.get("window")
 
@@ -68,7 +69,7 @@ export default function AudioPlayerScreen() {
 
   // Simulate playback progress
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null
+    let interval: number | null = null
 
     if (isPlaying) {
       interval = setInterval(() => {
@@ -79,7 +80,7 @@ export default function AudioPlayerScreen() {
           }
           return prev + 1
         })
-      }, 1000)
+      }, 1000) as unknown as number
     }
 
     return () => {
@@ -143,13 +144,10 @@ export default function AudioPlayerScreen() {
         </View>
         <Slider
           style={{ width: width - 48, height: 40 }}
-          minimumValue={0}
-          maximumValue={1}
+          minValue={0}
+          maxValue={1}
           value={progressPercentage / 100}
-          onValueChange={(value) => handleSeek(value)}
-          minimumTrackTintColor="#1ED760"
-          maximumTrackTintColor="#3E3E3E"
-          thumbStyle={{ backgroundColor: "#1ED760", width: 16, height: 16, borderRadius: 8 }}
+          onChange={(value) => handleSeek(value)}
         />
       </View>
 
