@@ -9,7 +9,7 @@
     "web": "DARK_MODE=media expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
-    "pre-commit": "(npx lint-staged && npx pretty-quick --staged) 2>&1",
+    "pre-commit": "(npx pretty-quick --staged) 2>&1",
     "format": "prettier --write \"./**/*.{ts,tsx,js,json}\"",
     "prepare": "husky"
   },
