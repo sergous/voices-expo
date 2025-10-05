@@ -10,6 +10,7 @@
     "test": "jest --watchAll",
     "lint": "expo lint",
     "pre-commit": "(npx pretty-quick --staged) 2>&1",
+    "pre-push": "exit 0",
     "format": "prettier --write \"./**/*.{ts,tsx,js,json}\"",
     "prepare": "husky"
   },
