@@ -1,77 +1,80 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, Dimensions } from 'react-native';
-import { 
-  Play, 
-  Download, 
-  Mic, 
-  Lock, 
-  User, 
-  Home, 
-  Search, 
-  Library, 
-  Star, 
+import {
+  Calendar,
   ChevronRight,
-  TrendingUp,
   Clock,
-  Calendar
-} from 'lucide-react-native';
+  Download,
+  Home,
+  Library,
+  Lock,
+  Mic,
+  Play,
+  Search,
+  Star,
+  TrendingUp,
+  User,
+} from "lucide-react-native"
+import React, { useState } from "react"
+import { Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window")
 
 // Mock data for recommendations
 const recommendedContent = [
   {
-    id: '1',
-    title: 'Vocal Power Foundations',
-    instructor: 'Juliana Andreeva',
-    type: 'course',
-    duration: '8 lessons',
+    id: "1",
+    title: "Vocal Power Foundations",
+    instructor: "Juliana Andreeva",
+    type: "course",
+    duration: "8 lessons",
     progress: 75,
     price: 2,
     isPurchased: true,
-    imageUrl: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fGNsYXNzcm9vbXxlbnwwfHwwfHx8MA%3D%3D',
+    imageUrl:
+      "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fGNsYXNzcm9vbXxlbnwwfHwwfHx8MA%3D%3D",
   },
   {
-    id: '2',
-    title: 'Breath Control Mastery',
-    instructor: 'Juliana Andreeva',
-    type: 'podcast',
-    duration: '42 min',
+    id: "2",
+    title: "Breath Control Mastery",
+    instructor: "Juliana Andreeva",
+    type: "podcast",
+    duration: "42 min",
     progress: 0,
     price: 2,
     isPurchased: false,
-    imageUrl: 'https://images.unsplash.com/photo-1480694313141-fce5e697ee25?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8c21hcnRwaG9uZXxlbnwwfHwwfHx8MA%3D%3D',
+    imageUrl:
+      "https://images.unsplash.com/photo-1480694313141-fce5e697ee25?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8c21hcnRwaG9uZXxlbnwwfHwwfHx8MA%3D%3D",
   },
   {
-    id: '3',
-    title: 'Vocal Range Expansion',
-    instructor: 'Juliana Andreeva',
-    type: 'course',
-    duration: '12 lessons',
+    id: "3",
+    title: "Vocal Range Expansion",
+    instructor: "Juliana Andreeva",
+    type: "course",
+    duration: "12 lessons",
     progress: 30,
     price: 2,
     isPurchased: true,
-    imageUrl: 'https://images.unsplash.com/photo-1515073838964-4d4d56a58b21?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8U3R1ZGVudCUyMGxlYXJuZXIlMjBwdXBpbCUyMGVkdWNhdGlvbnxlbnwwfHwwfHx8MA%3D%3D',
+    imageUrl:
+      "https://images.unsplash.com/photo-1515073838964-4d4d56a58b21?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8U3R1ZGVudCUyMGxlYXJuZXIlMjBwdXBpbCUyMGVkdWNhdGlvbnxlbnwwfHwwfHx8MA%3D%3D",
   },
-];
+]
 
 // Mock data for recent activity
 const recentActivity = [
-  { id: '1', title: 'Daily Vocal Warmups', type: 'course', time: '2 hours ago' },
-  { id: '2', title: 'Interview with Vocal Coach', type: 'podcast', time: '1 day ago' },
-  { id: '3', title: 'Pitch Training Exercises', type: 'course', time: '2 days ago' },
-];
+  { id: "1", title: "Daily Vocal Warmups", type: "course", time: "2 hours ago" },
+  { id: "2", title: "Interview with Vocal Coach", type: "podcast", time: "1 day ago" },
+  { id: "3", title: "Pitch Training Exercises", type: "course", time: "2 days ago" },
+]
 
 // Subscription plans
 const subscriptionPlans = [
-  { id: 'monthly', name: 'Monthly', price: 50, description: 'Full access to all content' },
-  { id: 'annual', name: 'Annual', price: 500, description: 'Save 20% with annual plan' },
-];
+  { id: "monthly", name: "Monthly", price: 50, description: "Full access to all content" },
+  { id: "annual", name: "Annual", price: 500, description: "Save 20% with annual plan" },
+]
 
 export default function DashboardScreen() {
-  const [activeTab, setActiveTab] = useState('home');
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [userName, setUserName] = useState('Alex');
+  const [activeTab, setActiveTab] = useState("home")
+  const [isSubscribed, setIsSubscribed] = useState(false)
+  const [userName, setUserName] = useState("Alex")
 
   return (
     <View className="flex-1 bg-[#121212]">
@@ -86,7 +89,7 @@ export default function DashboardScreen() {
             <User color="#1ED760" size={24} />
           </TouchableOpacity>
         </View>
-        
+
         {/* Subscription Banner */}
         {!isSubscribed && (
           <View className="mt-4 bg-gradient-to-r from-[#1ED760] to-[#2D5BFF] rounded-xl p-4">
@@ -95,7 +98,7 @@ export default function DashboardScreen() {
                 <Text className="text-white font-bold text-lg">Unlock All Content</Text>
                 <Text className="text-gray-200 text-sm">Subscribe for $50/month</Text>
               </View>
-              <TouchableOpacity 
+              <TouchableOpacity
                 className="bg-white rounded-full px-4 py-2"
                 onPress={() => setIsSubscribed(true)}
               >
@@ -124,7 +127,7 @@ export default function DashboardScreen() {
             <Text className="text-white text-2xl font-bold mt-2">78%</Text>
             <Text className="text-[#B3B3B3] text-sm mt-1">This month</Text>
           </View>
-          
+
           <View className="flex-1 bg-[#1E1E1E] rounded-2xl p-4">
             <View className="flex-row items-center">
               <Clock color="#2D5BFF" size={20} />
@@ -162,7 +165,7 @@ export default function DashboardScreen() {
               <Text className="text-[#2D5BFF]">View All</Text>
             </TouchableOpacity>
           </View>
-          
+
           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="max-h-40">
             <View className="flex-row gap-4">
               <View className="bg-[#1E1E1E] rounded-2xl p-4 w-64">
@@ -179,7 +182,7 @@ export default function DashboardScreen() {
                   <View className="h-2 bg-[#1ED760] rounded-full w-3/4"></View>
                 </View>
               </View>
-              
+
               <View className="bg-[#1E1E1E] rounded-2xl p-4 w-64">
                 <View className="flex-row justify-between items-start">
                   <View>
@@ -200,15 +203,9 @@ export default function DashboardScreen() {
           <Text className="text-white text-lg font-bold mb-3">Recommended for You</Text>
           <View className="gap-4">
             {recommendedContent.map((item) => (
-              <TouchableOpacity 
-                key={item.id} 
-                className="bg-[#1E1E1E] rounded-2xl overflow-hidden"
-              >
+              <TouchableOpacity key={item.id} className="bg-[#1E1E1E] rounded-2xl overflow-hidden">
                 <View className="flex-row">
-                  <Image 
-                    source={{ uri: item.imageUrl }} 
-                    className="w-24 h-24 rounded-l-2xl"
-                  />
+                  <Image source={{ uri: item.imageUrl }} className="w-24 h-24 rounded-l-2xl" />
                   <View className="flex-1 p-3 justify-between">
                     <View>
                       <Text className="text-white font-bold">{item.title}</Text>
@@ -221,7 +218,9 @@ export default function DashboardScreen() {
                           <>
                             {item.progress > 0 ? (
                               <View className="flex-row items-center">
-                                <Text className="text-[#1ED760] text-sm mr-2">{item.progress}%</Text>
+                                <Text className="text-[#1ED760] text-sm mr-2">
+                                  {item.progress}%
+                                </Text>
                                 <TouchableOpacity className="bg-[#1ED760] rounded-full p-2">
                                   <Play color="white" size={16} />
                                 </TouchableOpacity>
@@ -255,12 +254,9 @@ export default function DashboardScreen() {
           <Text className="text-white text-lg font-bold mb-3">Recent Activity</Text>
           <View className="gap-3">
             {recentActivity.map((activity) => (
-              <View 
-                key={activity.id} 
-                className="flex-row items-center bg-[#1E1E1E] rounded-xl p-4"
-              >
+              <View key={activity.id} className="flex-row items-center bg-[#1E1E1E] rounded-xl p-4">
                 <View className="bg-[#2A2A2A] w-10 h-10 rounded-full items-center justify-center mr-3">
-                  {activity.type === 'course' ? (
+                  {activity.type === "course" ? (
                     <Library color="#1ED760" size={20} />
                   ) : (
                     <Mic color="#1ED760" size={20} />
@@ -283,39 +279,55 @@ export default function DashboardScreen() {
       {/* Bottom Navigation */}
       <View className="absolute bottom-0 left-0 right-0 bg-[#121212] border-t border-[#1E1E1E]">
         <View className="flex-row justify-around py-3">
-          <TouchableOpacity 
-            className={`items-center px-4 py-2 rounded-full ${activeTab === 'home' ? 'bg-[#1E1E1E]' : ''}`}
-            onPress={() => setActiveTab('home')}
+          <TouchableOpacity
+            className={`items-center px-4 py-2 rounded-full ${activeTab === "home" ? "bg-[#1E1E1E]" : ""}`}
+            onPress={() => setActiveTab("home")}
           >
-            <Home color={activeTab === 'home' ? '#1ED760' : '#9CA3AF'} size={24} />
-            <Text className={`text-xs mt-1 ${activeTab === 'home' ? 'text-[#1ED760]' : 'text-[#B3B3B3]'}`}>Home</Text>
+            <Home color={activeTab === "home" ? "#1ED760" : "#9CA3AF"} size={24} />
+            <Text
+              className={`text-xs mt-1 ${activeTab === "home" ? "text-[#1ED760]" : "text-[#B3B3B3]"}`}
+            >
+              Home
+            </Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
-            className={`items-center px-4 py-2 rounded-full ${activeTab === 'search' ? 'bg-[#1E1E1E]' : ''}`}
-            onPress={() => setActiveTab('search')}
+
+          <TouchableOpacity
+            className={`items-center px-4 py-2 rounded-full ${activeTab === "search" ? "bg-[#1E1E1E]" : ""}`}
+            onPress={() => setActiveTab("search")}
           >
-            <Search color={activeTab === 'search' ? '#1ED760' : '#9CA3AF'} size={24} />
-            <Text className={`text-xs mt-1 ${activeTab === 'search' ? 'text-[#1ED760]' : 'text-[#B3B3B3]'}`}>Search</Text>
+            <Search color={activeTab === "search" ? "#1ED760" : "#9CA3AF"} size={24} />
+            <Text
+              className={`text-xs mt-1 ${activeTab === "search" ? "text-[#1ED760]" : "text-[#B3B3B3]"}`}
+            >
+              Search
+            </Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
-            className={`items-center px-4 py-2 rounded-full ${activeTab === 'library' ? 'bg-[#1E1E1E]' : ''}`}
-            onPress={() => setActiveTab('library')}
+
+          <TouchableOpacity
+            className={`items-center px-4 py-2 rounded-full ${activeTab === "library" ? "bg-[#1E1E1E]" : ""}`}
+            onPress={() => setActiveTab("library")}
           >
-            <Library color={activeTab === 'library' ? '#1ED760' : '#9CA3AF'} size={24} />
-            <Text className={`text-xs mt-1 ${activeTab === 'library' ? 'text-[#1ED760]' : 'text-[#B3B3B3]'}`}>Library</Text>
+            <Library color={activeTab === "library" ? "#1ED760" : "#9CA3AF"} size={24} />
+            <Text
+              className={`text-xs mt-1 ${activeTab === "library" ? "text-[#1ED760]" : "text-[#B3B3B3]"}`}
+            >
+              Library
+            </Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
-            className={`items-center px-4 py-2 rounded-full ${activeTab === 'profile' ? 'bg-[#1E1E1E]' : ''}`}
-            onPress={() => setActiveTab('profile')}
+
+          <TouchableOpacity
+            className={`items-center px-4 py-2 rounded-full ${activeTab === "profile" ? "bg-[#1E1E1E]" : ""}`}
+            onPress={() => setActiveTab("profile")}
           >
-            <User color={activeTab === 'profile' ? '#1ED760' : '#9CA3AF'} size={24} />
-            <Text className={`text-xs mt-1 ${activeTab === 'profile' ? 'text-[#1ED760]' : 'text-[#B3B3B3]'}`}>Profile</Text>
+            <User color={activeTab === "profile" ? "#1ED760" : "#9CA3AF"} size={24} />
+            <Text
+              className={`text-xs mt-1 ${activeTab === "profile" ? "text-[#1ED760]" : "text-[#B3B3B3]"}`}
+            >
+              Profile
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
     </View>
-  );
+  )
 }

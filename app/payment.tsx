@@ -1,54 +1,52 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
-import { Lock, CreditCard, Shield, CheckCircle, Smartphone } from 'lucide-react-native';
+import { CheckCircle, CreditCard, Lock, Shield, Smartphone } from "lucide-react-native"
+import React, { useState } from "react"
+import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native"
 
 export default function PaymentScreen() {
-  const [cardNumber, setCardNumber] = useState('');
-  const [expiry, setExpiry] = useState('');
-  const [cvv, setCvv] = useState('');
-  const [name, setName] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [cardNumber, setCardNumber] = useState("")
+  const [expiry, setExpiry] = useState("")
+  const [cvv, setCvv] = useState("")
+  const [name, setName] = useState("")
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const formatCardNumber = (text: string) => {
-    const cleaned = text.replace(/\D/g, '');
-    const match = cleaned.match(/^(\d{0,4})(\d{0,4})(\d{0,4})(\d{0,4})$/);
+    const cleaned = text.replace(/\D/g, "")
+    const match = cleaned.match(/^(\d{0,4})(\d{0,4})(\d{0,4})(\d{0,4})$/)
     if (match) {
-      const parts = [];
-      if (match[1]) parts.push(match[1]);
-      if (match[2]) parts.push(match[2]);
-      if (match[3]) parts.push(match[3]);
-      if (match[4]) parts.push(match[4]);
-      return parts.join(' ');
+      const parts = []
+      if (match[1]) parts.push(match[1])
+      if (match[2]) parts.push(match[2])
+      if (match[3]) parts.push(match[3])
+      if (match[4]) parts.push(match[4])
+      return parts.join(" ")
     }
-    return text;
-  };
+    return text
+  }
 
   const formatExpiry = (text: string) => {
-    const cleaned = text.replace(/\D/g, '');
+    const cleaned = text.replace(/\D/g, "")
     if (cleaned.length >= 3) {
-      return `${cleaned.substring(0, 2)}/${cleaned.substring(2, 4)}`;
+      return `${cleaned.substring(0, 2)}/${cleaned.substring(2, 4)}`
     }
-    return cleaned;
-  };
+    return cleaned
+  }
 
   const handlePayment = () => {
     if (!cardNumber || !expiry || !cvv || !name) {
-      Alert.alert('Error', 'Please fill in all payment details');
-      return;
+      Alert.alert("Error", "Please fill in all payment details")
+      return
     }
 
-    setIsProcessing(true);
-    
+    setIsProcessing(true)
+
     // Simulate payment processing
     setTimeout(() => {
-      setIsProcessing(false);
-      Alert.alert(
-        'Payment Successful',
-        'Your payment has been processed successfully!',
-        [{ text: 'OK' }]
-      );
-    }, 2000);
-  };
+      setIsProcessing(false)
+      Alert.alert("Payment Successful", "Your payment has been processed successfully!", [
+        { text: "OK" },
+      ])
+    }, 2000)
+  }
 
   return (
     <View className="flex-1 bg-gray-900">
@@ -68,19 +66,19 @@ export default function PaymentScreen() {
         {/* Order Summary */}
         <View className="bg-gray-800 rounded-xl p-4 mb-6">
           <Text className="text-white text-lg font-bold mb-3">Order Summary</Text>
-          
+
           <View className="flex-row justify-between mb-2">
             <Text className="text-gray-400">Premium Content</Text>
             <Text className="text-white">$2.00</Text>
           </View>
-          
+
           <View className="flex-row justify-between mb-2">
             <Text className="text-gray-400">Tax</Text>
             <Text className="text-white">$0.14</Text>
           </View>
-          
+
           <View className="border-t border-gray-700 my-2" />
-          
+
           <View className="flex-row justify-between">
             <Text className="text-white font-bold">Total</Text>
             <Text className="text-white font-bold">$2.14</Text>
@@ -90,7 +88,7 @@ export default function PaymentScreen() {
         {/* Payment Form */}
         <View className="bg-gray-800 rounded-xl p-4 mb-6">
           <Text className="text-white text-lg font-bold mb-4">Payment Details</Text>
-          
+
           {/* Card Number */}
           <View className="mb-4">
             <Text className="text-gray-400 text-sm mb-1">Card Number</Text>
@@ -107,7 +105,7 @@ export default function PaymentScreen() {
               />
             </View>
           </View>
-          
+
           {/* Expiry & CVV */}
           <View className="flex-row gap-4 mb-4">
             <View className="flex-1">
@@ -122,7 +120,7 @@ export default function PaymentScreen() {
                 maxLength={5}
               />
             </View>
-            
+
             <View className="flex-1">
               <Text className="text-gray-400 text-sm mb-1">CVV</Text>
               <TextInput
@@ -137,7 +135,7 @@ export default function PaymentScreen() {
               />
             </View>
           </View>
-          
+
           {/* Name on Card */}
           <View className="mb-4">
             <Text className="text-gray-400 text-sm mb-1">Name on Card</Text>
@@ -149,7 +147,7 @@ export default function PaymentScreen() {
               onChangeText={setName}
             />
           </View>
-          
+
           {/* Apple Pay Option */}
           <TouchableOpacity className="bg-black rounded-xl p-3 flex-row items-center justify-center mb-4">
             <Smartphone color="white" size={20} />
@@ -179,7 +177,7 @@ export default function PaymentScreen() {
 
       {/* Payment Button */}
       <View className="p-4 bg-gray-900 border-t border-gray-800">
-        <TouchableOpacity 
+        <TouchableOpacity
           className="bg-green-500 rounded-xl py-4 flex-row items-center justify-center"
           onPress={handlePayment}
           disabled={isProcessing}
@@ -198,5 +196,5 @@ export default function PaymentScreen() {
         </TouchableOpacity>
       </View>
     </View>
-  );
+  )
 }
